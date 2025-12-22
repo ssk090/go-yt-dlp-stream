@@ -1,5 +1,7 @@
 # go-yt-dlp-stream
 a simple server to stream youtube audio
+<img width="719" height="451" alt="image" src="https://github.com/user-attachments/assets/fd0c8410-f1a8-459d-acd3-7076392d62a0" />
+
 
 ## To run this from postman
 ```go
