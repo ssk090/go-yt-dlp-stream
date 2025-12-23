@@ -39,7 +39,8 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	// --no-warnings: Suppress warnings
 	// ytsearch1:<query>: Search and pick the first result
 	// Remove quiet flags and connect stderr for debugging
-	cmd := exec.Command("yt-dlp", "-f", "bestaudio", "-o", "-", "ytsearch1:"+req.Title)
+	// Use android client to bypass "Sign in" errors
+	cmd := exec.Command("yt-dlp", "-f", "bestaudio", "-o", "-", "--extractor-args", "youtube:player_client=android", "ytsearch1:"+req.Title)
 
 	// Connect stderr to the server logs so we can see why yt-dlp fails
 	cmd.Stderr = os.Stderr
