@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 )
 
@@ -37,20 +38,18 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	// --quiet: Suppress progress output
 	// --no-warnings: Suppress warnings
 	// ytsearch1:<query>: Search and pick the first result
-	cmd := exec.Command("yt-dlp", "-f", "bestaudio", "-o", "-", "--quiet", "--no-warnings", "ytsearch1:"+req.Title)
+	// Remove quiet flags and connect stderr for debugging
+	cmd := exec.Command("yt-dlp", "-f", "bestaudio", "-o", "-", "ytsearch1:"+req.Title)
+
+	// Connect stderr to the server logs so we can see why yt-dlp fails
+	cmd.Stderr = os.Stderr
 
 	// Set headers
-	// Note: precise content-type depends on the source, but audio/mpeg or application/octet-stream usually works.
-	// Postman typically plays whatever valid audio stream it receives.
 	w.Header().Set("Content-Type", "audio/mpeg")
 	w.Header().Set("Transfer-Encoding", "chunked")
 
 	// Connect stdout to the response writer
 	cmd.Stdout = w
-	
-	// We can capture stderr for debugging server-side if needed, 
-	// but strictly we just need to ensure it doesn't leak to stdout (it shouldn't).
-	// cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
 		log.Printf("Error starting yt-dlp: %v", err)
@@ -58,7 +57,7 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Wait for the command to finish. 
+	// Wait for the command to finish.
 	// usage of 'w' happens in the background as the process writes to the pipe.
 	if err := cmd.Wait(); err != nil {
 		log.Printf("yt-dlp finished with error (might be just an interruption): %v", err)
@@ -66,6 +65,7 @@ func streamHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Renamed to avoid usage conflict with dj.go
 func main() {
 	http.HandleFunc("/stream", streamHandler)
 	port := "8080"
