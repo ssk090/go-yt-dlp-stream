@@ -20,8 +20,8 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-# Install dependencies: python3 (required by yt-dlp) and ffmpeg
-RUN apk add --no-cache python3 ffmpeg curl
+# Install dependencies: python3 (required by yt-dlp), ffmpeg, and nodejs (for JS execution)
+RUN apk add --no-cache python3 ffmpeg curl nodejs
 
 # Install yt-dlp
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
