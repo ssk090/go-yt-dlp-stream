@@ -23,12 +23,9 @@ WORKDIR /root/
 # Install dependencies: python3 (required by yt-dlp), ffmpeg, and nodejs (for JS execution)
 RUN apk add --no-cache python3 ffmpeg curl nodejs
 
-# Install yt-dlp via pip to get the absolute latest version (nightly) 
-# which is required to fix the "Sign in" errors.
-RUN python3 -m venv /venv
-ENV PATH="/venv/bin:$PATH"
-# Install yt-dlp directly from main branch (bleeding edge)
-RUN pip install --no-cache-dir --force-reinstall https://github.com/yt-dlp/yt-dlp/archive/master.zip
+# Install yt-dlp
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
+    chmod a+rx /usr/local/bin/yt-dlp
 
 # Copy binary from builder
 COPY --from=builder /app/main .
