@@ -27,7 +27,8 @@ RUN apk add --no-cache python3 ffmpeg curl nodejs
 # which is required to fix the "Sign in" errors.
 RUN python3 -m venv /venv
 ENV PATH="/venv/bin:$PATH"
-RUN pip install --no-cache-dir -U "yt-dlp[default]"
+# Install yt-dlp directly from main branch (bleeding edge)
+RUN pip install --no-cache-dir --force-reinstall https://github.com/yt-dlp/yt-dlp/archive/master.zip
 
 # Copy binary from builder
 COPY --from=builder /app/main .
